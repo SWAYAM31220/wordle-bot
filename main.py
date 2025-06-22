@@ -187,12 +187,24 @@ async def handle_guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # === Main ===
 
+# === Main ===
+
 if __name__ == "__main__":
     print("✅ Starting WordleBot...")
-    print("🧪 Using telegram bot version:", __import__("telegram").__version__)
+    try:
+        import telegram
+        print("🧪 Using telegram bot version:", telegram.__version__)
+    except ImportError:
+        print("⚠️ telegram module not found.")
 
+    # Check token safety
+    if not BOT_TOKEN:
+        raise RuntimeError("❌ BOT_TOKEN is missing from environment variables!")
+
+    # Build and run the bot
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
+    # Command handlers
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("quiz", quiz))
     app.add_handler(CommandHandler("hint", hint))
@@ -201,8 +213,11 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("end", end))
     app.add_handler(CommandHandler("global", global_leaderboard))
     app.add_handler(CommandHandler("local", local_leaderboard))
+
+    # Word guess handler
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_guess))
 
     print("✅ WordleBot running... 🚀")
     app.run_polling()
+
 
