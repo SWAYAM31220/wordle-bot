@@ -5,13 +5,9 @@ import time
 import asyncio
 from telegram import Update
 from telegram.ext import (
-    Application,  # ✅ Yeh hona zaroori hai
-    CommandHandler,
-    MessageHandler,
-    ContextTypes,
-    filters
+    ApplicationBuilder, CommandHandler, MessageHandler,
+    ContextTypes, filters
 )
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -108,7 +104,7 @@ async def quiz(update: Update, context: ContextTypes.DEFAULT_TYPE):
     update_game_data(chat_id, data)
     active_games[chat_id] = data
     await update.message.reply_text("🧠 New word chosen! Start guessing!")
-    context.application.create_task(schedule_timeout(context, chat_id))
+    asyncio.create_task(schedule_timeout(context, chat_id))
 
 async def schedule_timeout(context, chat_id):
     await asyncio.sleep(300)
@@ -189,26 +185,15 @@ async def handle_guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         update_game_data(chat_id, data)
 
-# === Main ===
-
-# === Main ===
+# === MAIN ===
 
 if __name__ == "__main__":
+    from telegram.ext import ApplicationBuilder  # safe import inside main
     print("✅ Starting WordleBot...")
-    try:
-        import telegram
-        print("🧪 Using telegram bot version:", telegram.__version__)
-    except ImportError:
-        print("⚠️ telegram module not found.")
+    print("🧪 Using telegram bot version:", __import__("telegram").__version__)
 
-    # Check token safety
-    if not BOT_TOKEN:
-        raise RuntimeError("❌ BOT_TOKEN is missing from environment variables!")
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    # Build and run the bot
-    app = Application.builder().token(BOT_TOKEN).build()
-
-    # Command handlers
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("quiz", quiz))
     app.add_handler(CommandHandler("hint", hint))
@@ -217,11 +202,7 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("end", end))
     app.add_handler(CommandHandler("global", global_leaderboard))
     app.add_handler(CommandHandler("local", local_leaderboard))
-
-    # Word guess handler
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_guess))
 
     print("✅ WordleBot running... 🚀")
     app.run_polling()
-
-
