@@ -202,7 +202,7 @@ if __name__ == "__main__":
         raise RuntimeError("❌ BOT_TOKEN is missing from environment variables!")
 
     # Build and run the bot
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app = Application.builder().token(BOT_TOKEN).build()
 
     # Command handlers
     app.add_handler(CommandHandler("start", start))
