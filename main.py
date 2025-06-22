@@ -188,9 +188,9 @@ async def handle_guess(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # === Main ===
 
 if __name__ == "__main__":
-    from telegram.ext import defaults
+    print("✅ Starting WordleBot...")
+    print("🧪 Using telegram bot version:", __import__("telegram").__version__)
 
-    # Optional: Set a default parse mode, etc.
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -203,6 +203,6 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("local", local_leaderboard))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_guess))
 
-    print("✅ WordleBot running...")
-    app.run_polling(close_loop=False)  # Optional: Avoid issues in some deploys
+    print("✅ WordleBot running... 🚀")
+    app.run_polling()
 
