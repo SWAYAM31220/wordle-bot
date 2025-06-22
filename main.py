@@ -5,9 +5,13 @@ import time
 import asyncio
 from telegram import Update
 from telegram.ext import (
-    ApplicationBuilder, CommandHandler, MessageHandler,
-    ContextTypes, filters
+    Application,  # ✅ Yeh hona zaroori hai
+    CommandHandler,
+    MessageHandler,
+    ContextTypes,
+    filters
 )
+
 from dotenv import load_dotenv
 
 load_dotenv()
